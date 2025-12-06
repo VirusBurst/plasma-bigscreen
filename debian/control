@@ -1,25 +1,13 @@
 Source: plasma-bigscreen
 Section: kde
 Priority: optional
-Maintainer: Dein Name <deine@email>
 Build-Depends: debhelper-compat (= 13),
                cmake,
-               extra-cmake-modules,
-               qtbase6-dev,
-               libkf6plasma-dev,
-               plasma-nano-dev,
-               libplasma6-dev,
+               extra-cmake-modules [trixtie-backports],
+               qt6-base-dev,
+               libkf6plasma-dev [trixie-backports],
+               libplasma6-dev [trixie-backports],
+               plasma-nano-dev [trixie-backports],
                kirigami2-dev,
-               libkf6kirigamiplatform6-dev
-               # Weitere aus https://packages.debian.org/source/bookworm/plasma-bigscreen [web:39][web:51]
-Standards-Version: 4.6.2
-
-Package: plasma-bigscreen
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends},
-         plasma-nano,
-         plasma-nm,
-         plasma-pa,
-         kdeconnect
-Description: Plasma shell for TVs
- Plasma Bigscreen optimized for TV/remotes.
+               # siehe https://packages.debian.org/trixie-backports/plasma-bigscreen [web:51]
+Standards-Version: 4.7.0
