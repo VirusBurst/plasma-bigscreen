@@ -1,20 +1,34 @@
-name: Build DEB
+name: Build DEB (Debian)
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-    runs-on: ubuntu-24.04  # Für Plasma 6/Qt6 [web:38]
+    runs-on: ubuntu-24.04  # GitHub Runner (Action läuft in Debian Docker)
     steps:
     - uses: actions/checkout@v4
-    - uses: jtdor/build-deb-action@v1
+    
+    - name: Build DEB
+      uses: jtdor/build-deb-action@v1
       with:
-        docker-image: ubuntu:24.04  # Neuere Base für KF6
+        docker-image: debian:13  # Oder debian:12-bookworm für Plasma 5 Test
         buildpackage-opts: --build=binary --no-sign
         before-build-hook: |
+          apt update && apt upgrade -y
+          apt install -y eatmydata devscripts equivs
+          # Debian 13 Backports für Plasma 6 aktivieren
+          echo "deb http://deb.debian.org/debian trixie-backports main" >> /etc/apt/sources.list
           apt update
-          apt install -y eatmydata devscripts
-        extra-build-deps: extra-cmake-modules qt6-base-dev libkf6-dev plasma-dev  # Vollständige Liste erweitern [web:39][web:57]
+        extra-build-deps: |
+          cmake extra-cmake-modules
+          qt6-base-dev libqt6waylandclient6-dev
+          libkf6plasma-dev libplasma6-dev plasma-nano-dev
+          kirigami2-dev libkf6kirigamiplatform6-dev
+          libkf6config-dev libkf6i18n-dev libkf6declarative-dev
+          # Vollständige Liste aus Debian plasma-bigscreen + Backports [web:39][web:51]
+    
     - uses: actions/upload-artifact@v4
       with:
-        name: plasma-bigscreen.deb
-        path: debian/artifacts/*.deb
+        name: plasma-bigscreen-debian13.deb
+        path: |
+          *.deb
+          *.changes
