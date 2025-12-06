@@ -1,0 +1,20 @@
+name: Build DEB
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04  # Für Plasma 6/Qt6 [web:38]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: jtdor/build-deb-action@v1
+      with:
+        docker-image: ubuntu:24.04  # Neuere Base für KF6
+        buildpackage-opts: --build=binary --no-sign
+        before-build-hook: |
+          apt update
+          apt install -y eatmydata devscripts
+        extra-build-deps: extra-cmake-modules qt6-base-dev libkf6-dev plasma-dev  # Vollständige Liste erweitern [web:39][web:57]
+    - uses: actions/upload-artifact@v4
+      with:
+        name: plasma-bigscreen.deb
+        path: debian/artifacts/*.deb
